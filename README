@@ -1,0 +1,8 @@
+dvdcp - Copy a DVD title to disk
+================================
+
+This small utility copies a DVD title to disk. The user can select the data
+streams to include in the copy. Output format is MPEG-TS, although that may
+be changed pretty easily. ffmpeg/libav is used for the heavy lifting, while
+libdvdread does the DVD access. Libdvdread can use libdvdcss2 for
+decrypting.
