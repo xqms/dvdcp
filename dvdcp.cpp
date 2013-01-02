@@ -262,11 +262,14 @@ bool DVDCP::run()
 		AVStream* ostream = findAudioStream(m_oc, stream->id);
 		if(ostream)
 		{
-			int permil = av_rescale(packet.dts - stream->start_time, 1000, stream->duration);
-			if(permil != progress_permil)
+			if(packet.dts != AV_NOPTS_VALUE && stream->duration != AV_NOPTS_VALUE)
 			{
-				emit progress(permil);
-				progress_permil = permil;
+				int permil = av_rescale(packet.dts - stream->start_time, 1000, stream->duration);
+				if(permil != progress_permil)
+				{
+					emit progress(permil);
+					progress_permil = permil;
+				}
 			}
 
 			if(ostream->index == 0)
