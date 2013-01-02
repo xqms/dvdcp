@@ -63,7 +63,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::sourceSelected(const QModelIndex& index)
 {
-	QString path = m_sourceModel->path(index);
+	QString path = QDir::toNativeSeparators(m_sourceModel->path(index));
 
 	qDebug() << "Opening" << path;
 

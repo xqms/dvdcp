@@ -3,8 +3,11 @@
 
 #include "titlemodel.h"
 
+extern "C"
+{
 #include <dvdread/ifo_types.h>
 #include <dvdread/ifo_read.h>
+}
 
 #include <QDebug>
 
@@ -68,10 +71,21 @@ double TitleModel::playbackTime(int ifoIndex) const
 	const title_info_t& title = m_ifos[0]->tt_srpt->title[ifoIndex-1];
 	const ifo_handle_t& ifo = *m_ifos[title.title_set_nr];
 
+	if(!m_ifos[title.title_set_nr])
+		return 0.0;
+
 	if(!ifo.vts_ptt_srpt)
 		return 0.0;
 
+	if(title.vts_ttn > ifo.vts_ptt_srpt->nr_of_srpts)
+		return 0.0;
+
+	if(!ifo.vts_ptt_srpt->title[title.vts_ttn-1].nr_of_ptts)
+		return 0.0;
+
 	int pgcn = ifo.vts_ptt_srpt->title[title.vts_ttn-1].ptt[0].pgcn;
+	if(pgcn > ifo.vts_pgcit->nr_of_pgci_srp)
+		return 0.0;
 	const pgc_t& pgc = *ifo.vts_pgcit->pgci_srp[pgcn-1].pgc;
 
 	return dvdtime2msec(&pgc.playback_time) / 1000.0;
@@ -113,6 +127,8 @@ QVariant TitleModel::data(const QModelIndex& index, int role) const
 		case COL_NUM_CHAPTERS:
 			return QString::number(title.nr_of_ptts);
 		case COL_DURATION:
+			if(!m_ifos[index.row()])
+				return QString("-");
 			int secs = playbackTime(index.row()+1);
 			return QString("%1:%2:%3")
 				.arg(secs / 60 / 60, 2, 10, QChar('0'))
@@ -135,9 +151,15 @@ void TitleModel::setReader(dvd_reader_s* reader)
 	{
 		m_ifos.resize(1);
 
+		qDebug() << "Reading IFOs";
 		m_ifos[0] = ifoOpen(reader, 0);
-		for(int i = 1; i <= m_ifos[0]->vts_atrt->nr_of_vtss; ++i)
-			m_ifos.push_back(ifoOpen(reader, i));
+		if(m_ifos[0])
+		{
+			for(int i = 1; i <= m_ifos[0]->vts_atrt->nr_of_vtss; ++i)
+				m_ifos.push_back(ifoOpen(reader, i));
+		}
+		else
+			m_ifos.clear();
 	}
 	else
 		m_ifos.clear();
@@ -154,6 +176,9 @@ int TitleModel::longestTitleRow() const
 
 	for(uint i = 1; i < m_ifos.size(); ++i)
 	{
+		if(!m_ifos[i-1])
+			continue;
+
 		double cur_time = playbackTime(i);
 
 		if(ret == -1 || cur_time > pbTime)

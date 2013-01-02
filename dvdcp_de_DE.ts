@@ -102,13 +102,13 @@
     </message>
     <message>
         <location filename="mainwindow.ui" line="154"/>
-        <location filename="mainwindow.cpp" line="182"/>
+        <location filename="mainwindow.cpp" line="189"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
         <location filename="mainwindow.cpp" line="73"/>
-        <location filename="mainwindow.cpp" line="189"/>
+        <location filename="mainwindow.cpp" line="196"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
@@ -118,27 +118,27 @@
         <translation>Konnte DVD nicht öffnen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="134"/>
+        <location filename="mainwindow.cpp" line="141"/>
         <source>Select destination directory</source>
         <translation>Zielverzeichnis auswählen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="165"/>
+        <location filename="mainwindow.cpp" line="172"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="179"/>
+        <location filename="mainwindow.cpp" line="186"/>
         <source>Process finished</source>
         <translation>Vorgang abgeschlossen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="179"/>
+        <location filename="mainwindow.cpp" line="186"/>
         <source>Title extracted successfully.</source>
         <translation>Titel erfolgreich extrahiert.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="189"/>
+        <location filename="mainwindow.cpp" line="196"/>
         <source>There was an error during the copy operation: %1</source>
         <translation>Es gab einen Fehler während der Kopieroperation: %1</translation>
     </message>
@@ -184,17 +184,17 @@
 <context>
     <name>TitleModel</name>
     <message>
-        <location filename="titlemodel.cpp" line="90"/>
+        <location filename="titlemodel.cpp" line="104"/>
         <source>#</source>
         <translation>#</translation>
     </message>
     <message>
-        <location filename="titlemodel.cpp" line="91"/>
+        <location filename="titlemodel.cpp" line="105"/>
         <source>#Chapters</source>
         <translation>Kapitel</translation>
     </message>
     <message>
-        <location filename="titlemodel.cpp" line="92"/>
+        <location filename="titlemodel.cpp" line="106"/>
         <source>Duration</source>
         <translation>Dauer</translation>
     </message>

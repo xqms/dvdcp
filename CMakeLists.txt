@@ -6,6 +6,10 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_CXX_FLAGS "-Wall")
 
+if(WIN32)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CSS_FLAGS} -mno-ms-bitfields")
+endif()
+
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5LinguistTools REQUIRED)
 
@@ -39,8 +43,8 @@ qt5_create_translation(LANG_SRCS dvdcp_de_DE.ts
 add_executable(dvdcp
 	main.cpp
 	sourcemodel.cpp
-	titlemodel.cpp
 	streammodel.cpp
+	titlemodel.cpp
 	mainwindow.cpp
 	dvdcp.cpp
 	io_dvdread.cpp
