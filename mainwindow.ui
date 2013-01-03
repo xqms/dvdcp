@@ -73,7 +73,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="audioBox">
      <property name="title">
       <string>Audio settings</string>
      </property>

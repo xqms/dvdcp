@@ -179,6 +179,13 @@ void MainWindow::closeEvent(QCloseEvent* ev)
 	QWidget::closeEvent(ev);
 }
 
+void MainWindow::setSettingsEnabled(bool enabled)
+{
+	m_ui->sourceBox->setEnabled(enabled);
+	m_ui->destinationBox->setEnabled(enabled);
+	m_ui->audioBox->setEnabled(enabled);
+}
+
 void MainWindow::start()
 {
 	m_ui->progressBar->setValue(0);
@@ -194,8 +201,7 @@ void MainWindow::start()
 	idx = m_ui->codecComboBox->currentIndex();
 	m_cp->setAudioCodec((AVCodec*)m_ui->codecComboBox->itemData(idx).value<void*>());
 
-	m_ui->sourceBox->setEnabled(false);
-	m_ui->destinationBox->setEnabled(false);
+	setSettingsEnabled(false);
 
 	m_ui->startButton->setText(tr("Cancel"));
 	disconnect(m_ui->startButton, SIGNAL(clicked(bool)), this, SLOT(start()));
@@ -203,8 +209,7 @@ void MainWindow::start()
 
 	bool success = m_cp->run();
 
-	m_ui->sourceBox->setEnabled(true);
-	m_ui->destinationBox->setEnabled(true);
+	setSettingsEnabled(true);
 
 	if(!success)
 		m_ui->progressBar->setValue(0);

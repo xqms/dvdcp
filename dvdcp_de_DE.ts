@@ -127,7 +127,7 @@
     </message>
     <message>
         <location filename="mainwindow.ui" line="183"/>
-        <location filename="mainwindow.cpp" line="217"/>
+        <location filename="mainwindow.cpp" line="222"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
@@ -143,7 +143,7 @@
     </message>
     <message>
         <location filename="mainwindow.cpp" line="97"/>
-        <location filename="mainwindow.cpp" line="224"/>
+        <location filename="mainwindow.cpp" line="229"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
@@ -158,22 +158,22 @@
         <translation>Zielverzeichnis auswählen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="200"/>
+        <location filename="mainwindow.cpp" line="206"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="214"/>
+        <location filename="mainwindow.cpp" line="219"/>
         <source>Process finished</source>
         <translation>Vorgang abgeschlossen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="214"/>
+        <location filename="mainwindow.cpp" line="219"/>
         <source>Title extracted successfully.</source>
         <translation>Titel erfolgreich extrahiert.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="224"/>
+        <location filename="mainwindow.cpp" line="229"/>
         <source>There was an error during the copy operation: %1</source>
         <translation>Es gab einen Fehler während der Kopieroperation: %1</translation>
     </message>
