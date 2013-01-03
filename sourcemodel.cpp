@@ -92,7 +92,7 @@ QVariant SourceModel::data(const QModelIndex& index, int role) const
 	switch(role)
 	{
 		case Qt::DecorationRole:
-			return QIcon::fromTheme("media-optical-dvd-video");
+			return QIcon::fromTheme("media-optical-dvd-video", QIcon("icons/media-optical-dvd-video.png"));
 		case Qt::DisplayRole:
 			const SourceEntry& entry = m_entries[index.row()];
 			return QString("%1 (%2)")

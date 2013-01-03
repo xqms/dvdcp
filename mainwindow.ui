@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>418</width>
-    <height>476</height>
+    <height>516</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,7 +121,7 @@
         </property>
         <property name="icon">
          <iconset theme="document-open-folder">
-          <normaloff>../../../../.designer/backup</normaloff>../../../../.designer/backup</iconset>
+          <normaloff>icons/document-open-folder.png</normaloff>icons/document-open-folder.png</iconset>
         </property>
        </widget>
       </item>
