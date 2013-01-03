@@ -66,8 +66,12 @@ MainWindow::MainWindow()
 		if(!p->encode2)
 			continue;
 
+		QString sample_fmt = "";
+		if(p->sample_fmts && p->sample_fmts[0] != AV_SAMPLE_FMT_NONE)
+			sample_fmt = QString(" (%1)").arg(av_get_sample_fmt_name(p->sample_fmts[0]));
+
 		m_ui->codecComboBox->addItem(
-			QString("%1 (%2)").arg(p->long_name).arg(av_get_sample_fmt_name(p->sample_fmts[0])),
+			QString(p->long_name) + sample_fmt,
 			QVariant::fromValue((void*)p)
 		);
 	}

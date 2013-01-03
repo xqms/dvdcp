@@ -182,7 +182,7 @@ bool AudioHandler::setupStream(AVFormatContext* ctx, AVStream* source, AVCodec* 
 	m_stream->codec->sample_fmt = (AVSampleFormat)outlink->format;
 	m_stream->codec->channel_layout = outlink->channel_layout;
 	m_stream->codec->sample_rate = outlink->sample_rate;
-	m_stream->codec->channels = outlink->channels;
+	m_stream->codec->channels = av_get_channel_layout_nb_channels(av_get_channel_layout(m_channels.toLatin1().constData()));
 	m_stream->codec->time_base = outlink->time_base;
 	m_stream->codec->bit_rate = 192000;
 	m_stream->time_base = source->time_base;
