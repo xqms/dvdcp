@@ -14,6 +14,7 @@ enum Columns
 	COL_TYPE,
 	COL_CODEC,
 	COL_LANGUAGE,
+	COL_CHANNELS,
 
 	COL_COUNT
 };
@@ -104,6 +105,8 @@ QVariant StreamModel::headerData(int section, Qt::Orientation orientation, int r
 			return tr("Codec");
 		case COL_LANGUAGE:
 			return tr("Language");
+		case COL_CHANNELS:
+			return tr("Channels");
 	}
 
 	return QVariant();
@@ -128,6 +131,7 @@ QVariant StreamModel::data(const QModelIndex& index, int role) const
 			case COL_CODEC:
 				return tr("mpeg");
 			case COL_LANGUAGE:
+			case COL_CHANNELS:
 				return "-";
 		}
 
@@ -151,6 +155,11 @@ QVariant StreamModel::data(const QModelIndex& index, int role) const
 				code.append((char)(attr.lang_code & 0xFF));
 				return code;
 			}
+			case COL_CHANNELS:
+				if(attr.channels == 5)
+					return "5.1";
+				else
+					return QString::number(attr.channels+1);
 		}
 
 		return QVariant();
@@ -173,6 +182,8 @@ QVariant StreamModel::data(const QModelIndex& index, int role) const
 				code.append((char)(attr.lang_code & 0xFF));
 				return code;
 			}
+			case COL_CHANNELS:
+				return "-";
 		}
 	}
 
