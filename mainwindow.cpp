@@ -49,7 +49,9 @@ MainWindow::MainWindow()
 	m_ui->dirEdit->setText(settings.value("destDir").toString());
 
 	m_ui->splitSpinBox->setValue(settings.value("splitSize", 4096).toInt());
-	m_ui->splitCheckBox->setChecked(settings.value("splitEnabled", false).toBool());
+	bool split = settings.value("splitEnabled", false).toBool();
+	m_ui->splitCheckBox->setChecked(split);
+	m_ui->splitSpinBox->setEnabled(split);
 
 	m_cp = new DVDCP(this);
 	connect(m_cp, SIGNAL(error(QString)), SLOT(error(QString)));
