@@ -4,6 +4,7 @@
 #include "dvdcp.h"
 #include "io_dvdread.h"
 #include "io_split.h"
+#include "audiohandler.h"
 
 #include <QDebug>
 #include <QDir>
@@ -140,7 +141,7 @@ bool DVDCP::setupVideoStream()
 {
 	AVCodec* videoCodec = avcodec_find_encoder(AV_CODEC_ID_MPEG2VIDEO);
 	AVStream* videoStream = avformat_new_stream(m_oc, videoCodec);
-	videoStream->id = 0x1E0;
+	videoStream->id = 0x1ff;
 
 	AVStream* inputVideoStream = m_ic->streams[0];
 	avcodec_copy_context(videoStream->codec, inputVideoStream->codec);
@@ -163,7 +164,7 @@ bool DVDCP::setupVideoStream()
 // Taken from lsdvd
 const int AUDIO_ID[7] = {0x80, 0, 0xC0, 0xC0, 0xA0, 0, 0x88};
 
-static AVStream* findAudioStream(AVFormatContext* ctx, int id)
+static AVStream* findStreamByID(AVFormatContext* ctx, int id)
 {
 	for(uint i = 0; i < ctx->nb_streams; ++i)
 	{
@@ -176,6 +177,10 @@ static AVStream* findAudioStream(AVFormatContext* ctx, int id)
 
 bool DVDCP::setupAudioStreams()
 {
+	for(QMap<int, AudioHandler*>::iterator it = m_audioMap.begin(); it != m_audioMap.end(); ++it)
+		delete it.value();
+	m_audioMap.clear();
+
 	for(int i = 0; i < m_audioStreamEnable.count(); ++i)
 	{
 		if(!m_audioStreamEnable[i])
@@ -184,18 +189,22 @@ bool DVDCP::setupAudioStreams()
 		const audio_attr_t& attr = m_ifo->vtsi_mat->vts_audio_attr[i];
 		int id = AUDIO_ID[attr.audio_format] + i;
 
-		AVStream* stream = findAudioStream(m_ic, id);
+		AVStream* stream = findStreamByID(m_ic, id);
 		if(!stream)
 		{
 			error(tr("Could not find audio stream %1").arg(i+1));
 			return false;
 		}
 
-		AVCodec* codec = avcodec_find_encoder(stream->codec->codec_id);
-		AVStream* ostream = avformat_new_stream(m_oc, codec);
-		avcodec_copy_context(ostream->codec, stream->codec);
+		AudioHandler* handler = new AudioHandler();
+		if(!handler->setupStream(m_oc, stream))
+		{
+			delete handler;
+			error(tr("Could not init audio handler for stream %1").arg(i+1));
+			return false;
+		}
 
-		ostream->id = id;
+		m_audioMap[id] = handler;
 	}
 
 	return true;
@@ -259,8 +268,7 @@ bool DVDCP::run()
 			qDebug() << "No codec";
 		}
 
-		AVStream* ostream = findAudioStream(m_oc, stream->id);
-		if(ostream)
+		if(stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
 		{
 			if(packet.dts != AV_NOPTS_VALUE && stream->duration != AV_NOPTS_VALUE)
 			{
@@ -272,43 +280,42 @@ bool DVDCP::run()
 				}
 			}
 
-			if(ostream->index == 0)
+			AVStream* ostream = m_oc->streams[0];
+
+			if(!saw_first_ts)
 			{
-				if(!saw_first_ts)
-				{
-					dts = stream->avg_frame_rate.num ?
-						-stream->codec->has_b_frames * AV_TIME_BASE / av_q2d(stream->avg_frame_rate) : 0;
-					pts = 0;
-					if(packet.pts != AV_NOPTS_VALUE)
-					{
-						dts += av_rescale_q(pts, stream->time_base, AV_TIME_BASE_Q);
-						pts = dts;
-					}
-					saw_first_ts = true;
-				}
-
-				if(next_dts == AV_NOPTS_VALUE)
-					next_dts = dts;
-				if(next_pts == AV_NOPTS_VALUE)
-					next_pts = pts;
-
-				dts = next_dts;
-				next_dts += av_rescale_q(packet.duration, stream->time_base, AV_TIME_BASE_Q);
-				pts = dts;
-				next_pts = next_dts;
-
+				dts = stream->avg_frame_rate.num ?
+					-stream->codec->has_b_frames * AV_TIME_BASE / av_q2d(stream->avg_frame_rate) : 0;
+				pts = 0;
 				if(packet.pts != AV_NOPTS_VALUE)
-					packet.pts = av_rescale_q(packet.pts, stream->time_base, ostream->time_base);
-				else
-					packet.pts = AV_NOPTS_VALUE;
-
-				if(packet.dts == AV_NOPTS_VALUE)
-					packet.dts = av_rescale_q(dts, AV_TIME_BASE_Q, ostream->time_base);
-				else
-					packet.dts = av_rescale_q(packet.dts, stream->time_base, ostream->time_base);
-
-				pts = packet.pts + packet.duration;
+				{
+					dts += av_rescale_q(pts, stream->time_base, AV_TIME_BASE_Q);
+					pts = dts;
+				}
+				saw_first_ts = true;
 			}
+
+			if(next_dts == AV_NOPTS_VALUE)
+				next_dts = dts;
+			if(next_pts == AV_NOPTS_VALUE)
+				next_pts = pts;
+
+			dts = next_dts;
+			next_dts += av_rescale_q(packet.duration, stream->time_base, AV_TIME_BASE_Q);
+			pts = dts;
+			next_pts = next_dts;
+
+			if(packet.pts != AV_NOPTS_VALUE)
+				packet.pts = av_rescale_q(packet.pts, stream->time_base, ostream->time_base);
+			else
+				packet.pts = AV_NOPTS_VALUE;
+
+			if(packet.dts == AV_NOPTS_VALUE)
+				packet.dts = av_rescale_q(dts, AV_TIME_BASE_Q, ostream->time_base);
+			else
+				packet.dts = av_rescale_q(packet.dts, stream->time_base, ostream->time_base);
+
+			pts = packet.pts + packet.duration;
 
 			packet.stream_index = ostream->index;
 			if(memcmp(&stream->time_base, &ostream->time_base, sizeof(stream->time_base)) != 0)
@@ -316,6 +323,17 @@ bool DVDCP::run()
 
 			if(av_interleaved_write_frame(m_oc, &packet) != 0)
 			{
+			}
+		}
+		else if(stream->codec->codec_type == AVMEDIA_TYPE_AUDIO)
+		{
+			if(m_audioMap.contains(stream->id))
+			{
+				if(!m_audioMap[stream->id]->handleFrame(packet))
+				{
+					error(tr("Could not handle audio packet"));
+					return false;
+				}
 			}
 		}
 	}

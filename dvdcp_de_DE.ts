@@ -4,40 +4,50 @@
 <context>
     <name>DVDCP</name>
     <message>
-        <location filename="dvdcp.cpp" line="64"/>
+        <location filename="dvdcp.cpp" line="65"/>
         <source>Could not open VOB file</source>
         <translation>Konnte VOB-Datei nicht öffnen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="71"/>
+        <location filename="dvdcp.cpp" line="72"/>
         <source>Could not allocate AVFormatContext</source>
         <translation>Konnte AVFormatContext nicht erzeugen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="80"/>
+        <location filename="dvdcp.cpp" line="81"/>
         <source>Could not create AVIO context</source>
         <translation>Konnte AVIO-Kontext nicht erzeugen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="90"/>
+        <location filename="dvdcp.cpp" line="91"/>
         <source>Could not open input: %1</source>
         <translation>Konnte Eingabedatei nicht öffnen: %1</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="109"/>
+        <location filename="dvdcp.cpp" line="110"/>
         <source>Could not allocate output context</source>
         <translation>Konnte Ausgabe-Kontext nicht erzeugen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="123"/>
-        <location filename="dvdcp.cpp" line="130"/>
+        <location filename="dvdcp.cpp" line="124"/>
+        <location filename="dvdcp.cpp" line="131"/>
         <source>Could not open output file</source>
         <translation>Konnte Ausgabedatei nicht öffnen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="190"/>
+        <location filename="dvdcp.cpp" line="195"/>
         <source>Could not find audio stream %1</source>
         <translation>Konnte Audio-Kanal %1 nicht finden</translation>
+    </message>
+    <message>
+        <location filename="dvdcp.cpp" line="203"/>
+        <source>Could not init audio handler for stream %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="dvdcp.cpp" line="331"/>
+        <source>Could not handle audio packet</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

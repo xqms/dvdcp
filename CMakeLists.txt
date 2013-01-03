@@ -24,6 +24,8 @@ include_directories(${LIBDVDREAD_INCLUDE})
 find_library(AVFORMAT_LIBRARY avformat PATHS /usr/local/lib /usr/lib DOC "avformat library" REQUIRED)
 find_library(AVCODEC_LIBRARY avcodec PATHS /usr/local/lib /usr/lib DOC "avcodec library" REQUIRED)
 find_library(AVUTIL_LIBRARY avutil PATHS /usr/local/lib /usr/lib DOC "avutil library" REQUIRED)
+find_library(AVFILTER_LIBRARY avfilter PATHS /usr/local/lib /usr/lib DOC "avfilter library" REQUIRED)
+find_library(SWSCALE_LIBRARY swscale PATHS /usr/local/lib /usr/lib DOC "swrescale library" REQUIRED)
 
 find_path(AVFORMAT_INCLUDE libavformat/avformat.h REQUIRED)
 include_directories(${AVFORMAT_INCLUDE})
@@ -52,6 +54,7 @@ add_executable(dvdcp
 	io_split.cpp
 	checkboxdelegate.cpp
 	devicewatcher.cpp
+	audiohandler.cpp
 	${uifiles}
 	${LANG_SRCS}
 )
@@ -63,4 +66,6 @@ target_link_libraries(dvdcp
 	${AVUTIL_LIBRARY}
 	${AVFORMAT_LIBRARY}
 	${AVCODEC_LIBRARY}
+	${AVFILTER_LIBRARY}
+	${SWSCALE_LIBRARY}
 )

@@ -7,6 +7,8 @@
 extern "C"
 {
 #include <libavformat/avformat.h>
+#include <libavfilter/avfilter.h>
+#include <libavfilter/avfiltergraph.h>
 #include <dvdread/dvd_reader.h>
 #include <dvdread/ifo_read.h>
 }
@@ -76,7 +78,13 @@ private:
 	CObjectPtr(const CObjectPtr& other);
 };
 
+inline void really_free_avfilter_graph(AVFilterGraph* graph)
+{
+	avfilter_graph_free(&graph);
+}
+
 typedef CObjectPtr<AVFormatContext, avformat_free_context> AVFormatContextPtr;
+typedef CObjectPtr<AVFilterGraph, really_free_avfilter_graph> AVFilterGraphPtr;
 typedef CObjectPtr<dvd_reader_t, DVDClose> DVDReaderPtr;
 typedef CObjectPtr<ifo_handle_t, ifoClose> IFOHandlePtr;
 typedef CObjectPtr<dvd_file_t, DVDCloseFile> DVDFilePtr;

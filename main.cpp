@@ -17,6 +17,7 @@ int main(int argc, char** argv)
 	QApplication app(argc, argv);
 
 	av_register_all();
+	avfilter_register_all();
 
 	// i18n
 	QTranslator qtTranslator;

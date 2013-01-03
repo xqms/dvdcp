@@ -6,12 +6,14 @@
 
 #include <QObject>
 #include <QVector>
+#include <QMap>
 
 #include <dvdread/dvd_reader.h>
 #include <dvdread/ifo_types.h>
 #include "cobjectptr.h"
 
 struct AVFormatContext;
+class AudioHandler;
 
 class DVDCP : public QObject
 {
@@ -41,6 +43,7 @@ private:
 	QString m_name;
 	uint64_t m_splitSize;
 	QVector<bool> m_audioStreamEnable;
+	QMap<int, AudioHandler*> m_audioMap;
 	bool m_shouldStop;
 
 	AVFormatContextPtr m_oc;
