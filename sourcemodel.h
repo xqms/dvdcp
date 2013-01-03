@@ -7,6 +7,17 @@
 #include <QAbstractListModel>
 #include <QStringList>
 
+struct SourceEntry
+{
+	QString title;
+	QString path;
+
+	bool operator==(const SourceEntry& other) const
+	{
+		return title == other.title && path == other.path;
+	}
+};
+
 class SourceModel : public QAbstractListModel
 {
 Q_OBJECT
@@ -22,7 +33,9 @@ signals:
 public slots:
 	void reload();
 private:
-	QStringList m_paths;
+	QList<SourceEntry> m_entries;
+
+	bool hasEntry(const QString& path);
 };
 
 #endif

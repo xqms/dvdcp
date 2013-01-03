@@ -4,10 +4,12 @@
 #include "sourcemodel.h"
 
 #include "devicewatcher.h"
+#include "cobjectptr.h"
 
 #include <QDir>
 #include <QDebug>
 #include <QIcon>
+#include <dvdread/dvd_reader.h>
 
 SourceModel::SourceModel(QObject* parent)
  : QAbstractListModel(parent)
@@ -22,6 +24,17 @@ SourceModel::~SourceModel()
 {
 }
 
+bool SourceModel::hasEntry(const QString& path)
+{
+	foreach(const SourceEntry& entry, m_entries)
+	{
+		if(entry.path == path)
+			return true;
+	}
+
+	return false;
+}
+
 void SourceModel::reload()
 {
 	qDebug() << "SourceModel::reload()";
@@ -31,13 +44,13 @@ void SourceModel::reload()
 	QFileInfoList mounts = QDir("/media").entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
 #endif
 
-	for(int i = 0; i < m_paths.count();)
+	for(int i = 0; i < m_entries.count();)
 	{
-		QDir mountPoint(m_paths[i]);
+		QDir mountPoint(m_entries[i].path);
 		if(!mountPoint.exists("VIDEO_TS"))
 		{
 			beginRemoveRows(QModelIndex(), i, i);
-			m_paths.removeAt(i);
+			m_entries.removeAt(i);
 			endRemoveRows();
 		}
 		else
@@ -49,12 +62,26 @@ void SourceModel::reload()
 		QString path = info.absoluteFilePath();
 		QDir mountPoint(path);
 
-		if(mountPoint.exists("VIDEO_TS") && !m_paths.contains(path))
-		{
-			beginInsertRows(QModelIndex(), m_paths.count(), m_paths.count());
-			m_paths << path;
-			endInsertRows();
-		}
+		if(hasEntry(path))
+			continue;
+
+		if(!mountPoint.exists("VIDEO_TS"))
+			continue;
+
+		DVDReaderPtr reader;
+		reader = DVDOpen(QDir::toNativeSeparators(path).toLatin1().constData());
+		if(!reader)
+			continue;
+
+		char volid[32];
+		DVDUDFVolumeInfo(reader, volid, sizeof(volid), NULL, 0);
+
+		beginInsertRows(QModelIndex(), m_entries.count(), m_entries.count());
+		SourceEntry entry;
+		entry.path = path;
+		entry.title = volid;
+		m_entries << entry;
+		endInsertRows();
 	}
 
 	emit changed();
@@ -67,7 +94,10 @@ QVariant SourceModel::data(const QModelIndex& index, int role) const
 		case Qt::DecorationRole:
 			return QIcon::fromTheme("media-optical-dvd-video");
 		case Qt::DisplayRole:
-			return m_paths[index.row()];
+			const SourceEntry& entry = m_entries[index.row()];
+			return QString("%1 (%2)")
+				.arg(entry.title)
+				.arg(QDir::toNativeSeparators(entry.path));
 	}
 
 	return QVariant();
@@ -75,11 +105,11 @@ QVariant SourceModel::data(const QModelIndex& index, int role) const
 
 int SourceModel::rowCount(const QModelIndex& parent) const
 {
-	return m_paths.count();
+	return m_entries.count();
 }
 
 QString SourceModel::path(const QModelIndex& index) const
 {
-	return m_paths[index.row()];
+	return m_entries[index.row()].path;
 }
 
