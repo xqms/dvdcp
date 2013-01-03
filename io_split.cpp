@@ -12,6 +12,7 @@ extern "C"
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <inttypes.h>
 
 const int BUFSIZE = 1024;
 
@@ -52,7 +53,7 @@ static char* malloc_and_snprintf(const char* fmt, ...)
 			return NULL;
 		}
 		
-		if(ret < buf_len)
+		if((unsigned int)ret < buf_len)
 			break;
 		
 		buf_len = ret;
@@ -159,7 +160,7 @@ void io_split_close(AVIOContext* ctx)
 	
 	if(d->f)
 	{
-		fprintf(stderr, "[io_split] Closing output file, written size: %lldMiB\n",
+		fprintf(stderr, "[io_split] Closing output file, written size: %10" PRId64 " MiB\n",
 			d->written_size / 1024 / 1024
 		);
 		fclose(d->f);

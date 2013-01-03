@@ -17,6 +17,7 @@ find_path(LIBDVDREAD_INCLUDE "dvdread/dvd_reader.h" REQUIRED)
 find_library(LIBDVDREAD_LIB dvdread REQUIRED)
 
 add_definitions(-D__STDC_CONSTANT_MACROS)
+add_definitions(-D__STDC_FORMAT_MACROS)
 
 include_directories(${LIBDVDREAD_INCLUDE})
 
