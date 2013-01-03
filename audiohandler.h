@@ -19,8 +19,10 @@ public:
 	explicit AudioHandler(QObject* parent = 0);
 	virtual ~AudioHandler();
 
-	bool setupStream(AVFormatContext* ctx, AVStream* source);
-	   bool handleFrame(const AVPacket& packet);
+	void setChannels(const QString& channels);
+	void setLanguage(const QString& language);
+	bool setupStream(AVFormatContext* ctx, AVStream* source, AVCodec* codec = 0);
+	bool handleFrame(const AVPacket& packet);
 private:
 	AVFormatContext* m_ctx;
 	AVStream* m_sourceStream;
@@ -30,6 +32,8 @@ private:
 	AVFilterGraphPtr m_graph;
 	AVFilterContext* m_source;
 	AVFilterContext* m_sink;
+	QString m_channels;
+	QString m_language;
 };
 
 #endif

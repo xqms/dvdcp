@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QSettings>
+#include <QScrollBar>
 
 #include <dvdread/dvd_reader.h>
 #include <dvdread/ifo_types.h>
@@ -56,6 +57,27 @@ MainWindow::MainWindow()
 	m_cp = new DVDCP(this);
 	connect(m_cp, SIGNAL(error(QString)), SLOT(error(QString)));
 	connect(m_cp, SIGNAL(progress(int)), m_ui->progressBar, SLOT(setValue(int)));
+
+	for(AVCodec* p = av_codec_next(0); p; p = av_codec_next(p))
+	{
+		if(p->type != AVMEDIA_TYPE_AUDIO)
+			continue;
+
+		if(!p->encode2)
+			continue;
+
+		m_ui->codecComboBox->addItem(
+			QString("%1 (%2)").arg(p->long_name).arg(av_get_sample_fmt_name(p->sample_fmts[0])),
+			QVariant::fromValue((void*)p)
+		);
+	}
+	m_ui->codecComboBox->setCurrentIndex(settings.value("audioCodec", 0).toInt());
+
+	m_ui->channelComboBox->addItem(tr("Stereo"), "stereo");
+	m_ui->channelComboBox->addItem(tr("5.1 Surround"), "5.1");
+	m_ui->channelComboBox->setCurrentIndex(
+		settings.value("audioChannelIdx", 0).toInt()
+	);
 }
 
 MainWindow::~MainWindow()
@@ -125,6 +147,9 @@ void MainWindow::titleSelected(const QModelIndex& index)
 		Q_ASSERT(m_reader);
 		m_streamModel->setTitle(m_reader(), index.row()+1);
 		m_ui->streamView->resizeColumnsToContents();
+		qApp->processEvents();
+		m_ui->streamView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
+		m_ui->streamView->setMinimumWidth(m_ui->streamView->horizontalHeader()->length()+m_ui->streamView->verticalScrollBar()->sizeHint().width());
 	}
 	else
 		m_streamModel->setTitle(0, 0);
@@ -149,6 +174,8 @@ void MainWindow::closeEvent(QCloseEvent* ev)
 	settings.setValue("destDir", m_ui->dirEdit->text());
 	settings.setValue("splitSize", m_ui->splitSpinBox->value());
 	settings.setValue("splitEnabled", m_ui->splitCheckBox->isChecked());
+	settings.setValue("audioCodec", m_ui->codecComboBox->currentIndex());
+	settings.setValue("audioChannelIdx", m_ui->channelComboBox->currentIndex());
 	QWidget::closeEvent(ev);
 }
 
@@ -160,6 +187,12 @@ void MainWindow::start()
 	m_cp->setSplitSize(m_ui->splitCheckBox->isChecked() ? 1024LL * 1024LL * m_ui->splitSpinBox->value() : 0);
 	m_cp->setTitle(m_ui->titleView->currentIndex().row()+1);
 	m_cp->setEnabledAudioStreams(m_streamModel->enabledAudioStreams());
+
+	int idx = m_ui->channelComboBox->currentIndex();
+	m_cp->setAudioChannels(m_ui->channelComboBox->itemData(idx).toString());
+
+	idx = m_ui->codecComboBox->currentIndex();
+	m_cp->setAudioCodec((AVCodec*)m_ui->codecComboBox->itemData(idx).value<void*>());
 
 	m_ui->sourceBox->setEnabled(false);
 	m_ui->destinationBox->setEnabled(false);

@@ -17,6 +17,8 @@ extern "C"
 #include <dvdread/ifo_types.h>
 #include <dvdread/ifo_read.h>
 #include <dvdread/ifo_print.h>
+
+#include "contrib/avlanguage.h"
 }
 
 int video_height[4] = {480, 576, -1, 576};
@@ -28,6 +30,7 @@ DVDCP::DVDCP(QObject* parent)
  , m_title(0)
  , m_destDir(".")
  , m_splitSize(0)
+ , m_audioCodec(0)
 {
 }
 
@@ -54,6 +57,16 @@ void DVDCP::setSplitSize(uint64_t split_size)
 void DVDCP::setTitle(int title)
 {
 	m_title = title;
+}
+
+void DVDCP::setAudioChannels(const QString& channelSpec)
+{
+	m_audioChannels = channelSpec;
+}
+
+void DVDCP::setAudioCodec(AVCodec* codec)
+{
+	m_audioCodec = codec;
 }
 
 bool DVDCP::openInput()
@@ -197,7 +210,14 @@ bool DVDCP::setupAudioStreams()
 		}
 
 		AudioHandler* handler = new AudioHandler();
-		if(!handler->setupStream(m_oc, stream))
+		handler->setChannels(m_audioChannels);
+
+		QByteArray lang(2, 0);
+		lang[0] = attr.lang_code >> 8;
+		lang[1] = attr.lang_code & 0xFF;
+		const char* term_lang = av_convert_lang_to(lang.constData(), AV_LANG_ISO639_2_TERM);
+		handler->setLanguage(term_lang);
+		if(!handler->setupStream(m_oc, stream, m_audioCodec))
 		{
 			delete handler;
 			error(tr("Could not init audio handler for stream %1").arg(i+1));

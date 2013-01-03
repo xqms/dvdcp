@@ -55,6 +55,7 @@ add_executable(dvdcp
 	checkboxdelegate.cpp
 	devicewatcher.cpp
 	audiohandler.cpp
+	contrib/avlanguage.c
 	${uifiles}
 	${LANG_SRCS}
 )

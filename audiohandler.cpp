@@ -20,9 +20,6 @@ extern "C"
 #include <libavfilter/avcodec.h>
 }
 
-const char* FILTER = "aformat=sample_fmts\\=s16:channel_layouts\\=stereo";
-const enum AVSampleFormat SAMPLE_FMTS[] = { AV_SAMPLE_FMT_S16, (AVSampleFormat)-1 };
-
 AVSampleFormat toNonPlanar(AVSampleFormat fmt)
 {
 	if(av_sample_fmt_is_planar(fmt))
@@ -55,6 +52,7 @@ static AVCodec* findCodec(AVCodecID id, AVSampleFormat fmt)
 
 AudioHandler::AudioHandler(QObject* parent)
  : QObject(parent)
+ , m_channels("stereo")
 {
 }
 
@@ -62,7 +60,17 @@ AudioHandler::~AudioHandler()
 {
 }
 
-bool AudioHandler::setupStream(AVFormatContext* ctx, AVStream* source)
+void AudioHandler::setChannels(const QString& channels)
+{
+	m_channels = channels;
+}
+
+void AudioHandler::setLanguage(const QString& language)
+{
+	m_language = language;
+}
+
+bool AudioHandler::setupStream(AVFormatContext* ctx, AVStream* source, AVCodec* encoder)
 {
 	// Init decoder
 	AVCodec* decoder = avcodec_find_decoder(source->codec->codec_id);
@@ -105,7 +113,7 @@ bool AudioHandler::setupStream(AVFormatContext* ctx, AVStream* source)
 
 	/* buffer audio sink: to terminate the filter chain. */
 	AVABufferSinkParams* abuffersink_params = av_abuffersink_params_alloc();
-	abuffersink_params->sample_fmts = SAMPLE_FMTS;
+	abuffersink_params->sample_fmts = encoder->sample_fmts;
 
 	ret = avfilter_graph_create_filter(
 		&m_sink, filt_buffer_sink, "out",
@@ -130,7 +138,11 @@ bool AudioHandler::setupStream(AVFormatContext* ctx, AVStream* source)
 	inputs->pad_idx    = 0;
 	inputs->next       = NULL;
 
-	if ((ret = avfilter_graph_parse(m_graph, FILTER,
+	QByteArray filterString =
+		QByteArray("aformat=sample_fmts\\=") + av_get_sample_fmt_name(encoder->sample_fmts[0])
+			+ ":channel_layouts\\=" + m_channels.toLatin1();
+
+	if ((ret = avfilter_graph_parse(m_graph, filterString.constData(),
 	                                &inputs, &outputs, NULL)) < 0)
 		return false;
 
@@ -149,9 +161,9 @@ bool AudioHandler::setupStream(AVFormatContext* ctx, AVStream* source)
 
 	// Init output stream
 	m_ctx = ctx;
-// 	AVCodec* encoder = findCodec(source->codec->codec_id, (AVSampleFormat)outlink->format);
-	AVCodec* encoder = findCodec(AV_CODEC_ID_MP2, (AVSampleFormat)outlink->format);
-// 	AVCodec* encoder = avcodec_find_encoder(AV_CODEC_ID_AC3);
+	if(!encoder)
+		encoder = findCodec(source->codec->codec_id, source->codec->sample_fmt);
+
 	if(!encoder)
 	{
 		error("Could not find audio encoder");
@@ -165,7 +177,8 @@ bool AudioHandler::setupStream(AVFormatContext* ctx, AVStream* source)
 		error("Could not open audio output stream");
 		return false;
 	}
-	m_stream->id = 0x203;
+
+	m_stream->id = source->id;
 	m_stream->codec->sample_fmt = (AVSampleFormat)outlink->format;
 	m_stream->codec->channel_layout = outlink->channel_layout;
 	m_stream->codec->sample_rate = outlink->sample_rate;
@@ -174,7 +187,9 @@ bool AudioHandler::setupStream(AVFormatContext* ctx, AVStream* source)
 	m_stream->codec->bit_rate = 192000;
 	m_stream->time_base = source->time_base;
 	m_stream->stream_identifier = source->stream_identifier;
-	av_dict_set(&m_stream->metadata, "language", "deu", 0);
+
+	if(!m_language.isNull())
+		av_dict_set(&m_stream->metadata, "language", m_language.toLatin1().constData(), 0);
 
 	if(avcodec_open2(m_stream->codec, encoder, NULL) != 0)
 	{

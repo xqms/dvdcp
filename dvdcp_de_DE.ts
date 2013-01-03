@@ -4,50 +4,50 @@
 <context>
     <name>DVDCP</name>
     <message>
-        <location filename="dvdcp.cpp" line="65"/>
+        <location filename="dvdcp.cpp" line="78"/>
         <source>Could not open VOB file</source>
         <translation>Konnte VOB-Datei nicht öffnen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="72"/>
+        <location filename="dvdcp.cpp" line="85"/>
         <source>Could not allocate AVFormatContext</source>
         <translation>Konnte AVFormatContext nicht erzeugen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="81"/>
+        <location filename="dvdcp.cpp" line="94"/>
         <source>Could not create AVIO context</source>
         <translation>Konnte AVIO-Kontext nicht erzeugen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="91"/>
+        <location filename="dvdcp.cpp" line="104"/>
         <source>Could not open input: %1</source>
         <translation>Konnte Eingabedatei nicht öffnen: %1</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="110"/>
+        <location filename="dvdcp.cpp" line="123"/>
         <source>Could not allocate output context</source>
         <translation>Konnte Ausgabe-Kontext nicht erzeugen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="124"/>
-        <location filename="dvdcp.cpp" line="131"/>
+        <location filename="dvdcp.cpp" line="137"/>
+        <location filename="dvdcp.cpp" line="144"/>
         <source>Could not open output file</source>
         <translation>Konnte Ausgabedatei nicht öffnen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="195"/>
+        <location filename="dvdcp.cpp" line="208"/>
         <source>Could not find audio stream %1</source>
         <translation>Konnte Audio-Kanal %1 nicht finden</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="203"/>
+        <location filename="dvdcp.cpp" line="223"/>
         <source>Could not init audio handler for stream %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Audio-Konverter für Kanal %1 nicht initialisieren</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="331"/>
+        <location filename="dvdcp.cpp" line="354"/>
         <source>Could not handle audio packet</source>
-        <translation type="unfinished"></translation>
+        <translation>Konnte Audio-Paket nicht behandeln</translation>
     </message>
 </context>
 <context>
@@ -82,73 +82,98 @@
     </message>
     <message>
         <location filename="mainwindow.ui" line="78"/>
+        <source>Audio settings</source>
+        <translation>Audio-Einstellungen</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="84"/>
+        <source>Codec</source>
+        <translation>Kompression</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="94"/>
+        <source>Channels</source>
+        <translation>Kanäle</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="107"/>
         <source>Destination</source>
         <translation>Ziel</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="84"/>
+        <location filename="mainwindow.ui" line="113"/>
         <source>Directory</source>
         <translation>Verzeichnis</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="102"/>
+        <location filename="mainwindow.ui" line="131"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="115"/>
+        <location filename="mainwindow.ui" line="144"/>
         <source>Split after</source>
         <translation>Datei aufsplitten nach</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="138"/>
+        <location filename="mainwindow.ui" line="167"/>
         <source>MB</source>
         <translation>MB</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="148"/>
+        <location filename="mainwindow.ui" line="177"/>
         <source>Progress</source>
         <translation>Fortschritt</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="154"/>
-        <location filename="mainwindow.cpp" line="189"/>
+        <location filename="mainwindow.ui" line="183"/>
+        <location filename="mainwindow.cpp" line="217"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="73"/>
-        <location filename="mainwindow.cpp" line="196"/>
+        <location filename="mainwindow.cpp" line="76"/>
+        <source>Stereo</source>
+        <translation>Stereo</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="77"/>
+        <source>5.1 Surround</source>
+        <translation>5.1 Surround</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.cpp" line="97"/>
+        <location filename="mainwindow.cpp" line="224"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="73"/>
+        <location filename="mainwindow.cpp" line="97"/>
         <source>Could not open DVD</source>
         <translation>Konnte DVD nicht öffnen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="141"/>
+        <location filename="mainwindow.cpp" line="161"/>
         <source>Select destination directory</source>
         <translation>Zielverzeichnis auswählen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="172"/>
+        <location filename="mainwindow.cpp" line="200"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="186"/>
+        <location filename="mainwindow.cpp" line="214"/>
         <source>Process finished</source>
         <translation>Vorgang abgeschlossen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="186"/>
+        <location filename="mainwindow.cpp" line="214"/>
         <source>Title extracted successfully.</source>
         <translation>Titel erfolgreich extrahiert.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="196"/>
+        <location filename="mainwindow.cpp" line="224"/>
         <source>There was an error during the copy operation: %1</source>
         <translation>Es gab einen Fehler während der Kopieroperation: %1</translation>
     </message>

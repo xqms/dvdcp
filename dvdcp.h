@@ -27,6 +27,9 @@ public:
 	void setDest(const QString& path, const QString& name);
 	void setSplitSize(uint64_t split_size);
 
+	void setAudioCodec(AVCodec* codec);
+	void setAudioChannels(const QString& channelSpec);
+
 	void setEnabledAudioStreams(const QVector<bool>& streams);
 signals:
 	void error(const QString& msg);
@@ -44,6 +47,8 @@ private:
 	uint64_t m_splitSize;
 	QVector<bool> m_audioStreamEnable;
 	QMap<int, AudioHandler*> m_audioMap;
+	QString m_audioChannels;
+	AVCodec* m_audioCodec;
 	bool m_shouldStop;
 
 	AVFormatContextPtr m_oc;
