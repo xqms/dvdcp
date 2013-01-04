@@ -15,6 +15,7 @@
 #include <QFileDialog>
 #include <QSettings>
 #include <QScrollBar>
+#include <QCloseEvent>
 
 #include <dvdread/dvd_reader.h>
 #include <dvdread/ifo_types.h>
@@ -25,6 +26,7 @@
 MainWindow::MainWindow()
  : QWidget()
  , m_ui(new Ui::MainWindow)
+ , m_processing(false)
 {
 	m_ui->setupUi(this);
 
@@ -174,6 +176,12 @@ void MainWindow::selectDirectory()
 
 void MainWindow::closeEvent(QCloseEvent* ev)
 {
+	if(m_processing)
+	{
+		ev->ignore();
+		return;
+	}
+
 	QSettings settings("de.x-quadraht", "dvdcp");
 	settings.setValue("destDir", m_ui->dirEdit->text());
 	settings.setValue("splitSize", m_ui->splitSpinBox->value());
@@ -192,6 +200,7 @@ void MainWindow::setSettingsEnabled(bool enabled)
 
 void MainWindow::start()
 {
+	m_processing = true;
 	m_ui->progressBar->setValue(0);
 	m_cp->setDest(m_ui->dirEdit->text(), m_ui->nameEdit->text());
 	m_cp->setReader(m_reader());
@@ -226,6 +235,8 @@ void MainWindow::start()
 	m_ui->startButton->setText(tr("Start"));
 	disconnect(m_ui->startButton, SIGNAL(clicked(bool)), m_cp, SLOT(cancel()));
 	connect(m_ui->startButton, SIGNAL(clicked(bool)), SLOT(start()));
+
+	m_processing = false;
 }
 
 void MainWindow::error(const QString& msg)

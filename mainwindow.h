@@ -47,6 +47,7 @@ private:
 	StreamModel* m_streamModel;
 	DVDReaderPtr m_reader;
 	DVDCP* m_cp;
+	bool m_processing;
 
 	void setSettingsEnabled(bool enabled);
 };
