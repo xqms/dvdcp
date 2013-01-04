@@ -4,7 +4,7 @@
 #include "io_dvdread.h"
 
 #define LOG_PREFIX "[io_dvdread]"
-#define DEBUG 0
+#define DEBUG 1
 #include "log.h"
 
 struct DVDReadContext
@@ -23,25 +23,26 @@ int io_dvdread_read_packet(void* opaque, uint8_t* buf, int size)
 
 	uint64_t offset = d->pos;
 	uint64_t count = 0;
+	uint64_t dsize = size;
 
 	if(d->pos >= d->size)
-		size = 0;
-	else if(d->pos + size > d->size)
-		size = d->size - d->pos;
+		dsize = 0;
+	else if(d->pos + dsize > d->size)
+		dsize = d->size - d->pos;
 
-	while(size > 0)
+	while(dsize > 0)
 	{
-		int ret = DVDReadBlocks(d->file, offset / DVD_VIDEO_LB_LEN, 1, d->buffer);
+		int64_t ret = DVDReadBlocks(d->file, offset / DVD_VIDEO_LB_LEN, 1, d->buffer);
 		if(ret < 0)
 			return ret;
 		if(ret == 0)
 			break;
 
-		ret *= DVD_VIDEO_LB_LEN;
+		uint64_t bytes = ret * DVD_VIDEO_LB_LEN;
 
 		log_debug("read %10d from block %10lu for size %10d", ret, offset / DVD_VIDEO_LB_LEN, size);
 
-		int64_t cnt = (size < ret) ? size : ret;
+		uint64_t cnt = (dsize < bytes) ? dsize : bytes;
 
 		memcpy(buf, d->buffer, cnt);
 
@@ -49,7 +50,7 @@ int io_dvdread_read_packet(void* opaque, uint8_t* buf, int size)
 		d->pos += cnt;
 		buf += cnt;
 		count += cnt;
-		size -= cnt;
+		dsize -= cnt;
 	}
 
 	return count;
@@ -62,16 +63,16 @@ int64_t io_dvdread_seek(void* opaque, int64_t offset, int whence)
 	switch(whence)
 	{
 		case SEEK_SET:
-			log_debug("seek set %ld", offset);
+			log_debug("seek set %"PRId64, offset);
 			d->pos = offset;
 			return offset;
 			break;
 		case SEEK_CUR:
-			log_debug("seek cur => %ld", d->pos);
+			log_debug("seek cur => %"PRId64, d->pos);
 			return d->pos;
 		case SEEK_END:
-			log_debug("seek end %ld", offset);
-			d->pos = offset = DVDFileSize(d->file)*DVD_VIDEO_LB_LEN + offset;
+			log_debug("seek end %"PRId64, offset);
+			d->pos = offset = d->size + offset;
 			return offset;
 		case AVSEEK_SIZE:
 			return d->size;
@@ -93,7 +94,9 @@ AVIOContext* io_dvdread_create(dvd_file_t* file)
 	d->file = file;
 	d->pos = 0;
 	d->buffer = (uint8_t*)av_malloc(DVD_VIDEO_LB_LEN);
-	d->size = DVDFileSize(file) * DVD_VIDEO_LB_LEN;
+	d->size = ((uint64_t)DVDFileSize(file)) * ((uint64_t)DVD_VIDEO_LB_LEN);
+
+	log_debug("file size: %10"PRId64" MiB", d->size / 1024 / 1024);
 
 	ctx = avio_alloc_context(
 		buffer, DVD_VIDEO_LB_LEN,
