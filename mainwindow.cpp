@@ -155,7 +155,7 @@ void MainWindow::titleSelected(const QModelIndex& index)
 		m_ui->streamView->resizeColumnsToContents();
 		qApp->processEvents();
 		m_ui->streamView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
-		m_ui->streamView->setMinimumWidth(m_ui->streamView->horizontalHeader()->length()+m_ui->streamView->verticalScrollBar()->sizeHint().width());
+		m_ui->streamView->setMinimumWidth(m_ui->streamView->horizontalHeader()->length()+m_ui->streamView->verticalScrollBar()->sizeHint().width()+10);
 	}
 	else
 		m_streamModel->setTitle(0, 0);
