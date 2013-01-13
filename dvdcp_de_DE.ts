@@ -4,48 +4,53 @@
 <context>
     <name>DVDCP</name>
     <message>
-        <location filename="dvdcp.cpp" line="78"/>
+        <location filename="dvdcp.cpp" line="87"/>
+        <source>Could not open first IFO</source>
+        <translation>Konnte erste IFO-Datei nicht öffnen</translation>
+    </message>
+    <message>
+        <location filename="dvdcp.cpp" line="101"/>
         <source>Could not open VOB file</source>
         <translation>Konnte VOB-Datei nicht öffnen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="85"/>
+        <location filename="dvdcp.cpp" line="108"/>
         <source>Could not allocate AVFormatContext</source>
         <translation>Konnte AVFormatContext nicht erzeugen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="94"/>
+        <location filename="dvdcp.cpp" line="117"/>
         <source>Could not create AVIO context</source>
         <translation>Konnte AVIO-Kontext nicht erzeugen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="104"/>
+        <location filename="dvdcp.cpp" line="127"/>
         <source>Could not open input: %1</source>
         <translation>Konnte Eingabedatei nicht öffnen: %1</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="123"/>
+        <location filename="dvdcp.cpp" line="146"/>
         <source>Could not allocate output context</source>
         <translation>Konnte Ausgabe-Kontext nicht erzeugen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="137"/>
-        <location filename="dvdcp.cpp" line="144"/>
+        <location filename="dvdcp.cpp" line="160"/>
+        <location filename="dvdcp.cpp" line="167"/>
         <source>Could not open output file</source>
         <translation>Konnte Ausgabedatei nicht öffnen</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="208"/>
+        <location filename="dvdcp.cpp" line="231"/>
         <source>Could not find audio stream %1</source>
         <translation>Konnte Audio-Kanal %1 nicht finden</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="223"/>
+        <location filename="dvdcp.cpp" line="246"/>
         <source>Could not init audio handler for stream %1</source>
         <translation>Konnte Audio-Konverter für Kanal %1 nicht initialisieren</translation>
     </message>
     <message>
-        <location filename="dvdcp.cpp" line="354"/>
+        <location filename="dvdcp.cpp" line="396"/>
         <source>Could not handle audio packet</source>
         <translation>Konnte Audio-Paket nicht behandeln</translation>
     </message>
@@ -53,127 +58,127 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="mainwindow.ui" line="14"/>
+        <location filename="mainwindow.ui" line="20"/>
         <source>DVDCopy</source>
         <translation>DVDCopy</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="26"/>
+        <location filename="mainwindow.ui" line="32"/>
         <source>Source</source>
         <translation>Quelle</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="32"/>
+        <location filename="mainwindow.ui" line="38"/>
         <source>1) Source</source>
         <oldsource>1) Source xx</oldsource>
         <translation>1) Quelle</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="39"/>
+        <location filename="mainwindow.ui" line="45"/>
         <source>2) Title</source>
         <oldsource>Title</oldsource>
         <translation>2) Titel</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="68"/>
+        <location filename="mainwindow.ui" line="88"/>
         <source>3) Streams</source>
         <oldsource>Streams</oldsource>
         <translation>3) Datenströme</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="78"/>
+        <location filename="mainwindow.ui" line="98"/>
         <source>Audio settings</source>
         <translation>Audio-Einstellungen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="84"/>
+        <location filename="mainwindow.ui" line="104"/>
         <source>Codec</source>
         <translation>Kompression</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="94"/>
+        <location filename="mainwindow.ui" line="114"/>
         <source>Channels</source>
         <translation>Kanäle</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="107"/>
+        <location filename="mainwindow.ui" line="127"/>
         <source>Destination</source>
         <translation>Ziel</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="113"/>
+        <location filename="mainwindow.ui" line="133"/>
         <source>Directory</source>
         <translation>Verzeichnis</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="131"/>
+        <location filename="mainwindow.ui" line="151"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="144"/>
+        <location filename="mainwindow.ui" line="164"/>
         <source>Split after</source>
         <translation>Datei aufsplitten nach</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="167"/>
+        <location filename="mainwindow.ui" line="187"/>
         <source>MB</source>
         <translation>MB</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="177"/>
+        <location filename="mainwindow.ui" line="197"/>
         <source>Progress</source>
         <translation>Fortschritt</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="183"/>
-        <location filename="mainwindow.cpp" line="222"/>
+        <location filename="mainwindow.ui" line="203"/>
+        <location filename="mainwindow.cpp" line="239"/>
         <source>Start</source>
         <translation>Start</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="76"/>
+        <location filename="mainwindow.cpp" line="82"/>
         <source>Stereo</source>
         <translation>Stereo</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="77"/>
+        <location filename="mainwindow.cpp" line="83"/>
         <source>5.1 Surround</source>
         <translation>5.1 Surround</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="97"/>
-        <location filename="mainwindow.cpp" line="229"/>
+        <location filename="mainwindow.cpp" line="103"/>
+        <location filename="mainwindow.cpp" line="248"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="97"/>
+        <location filename="mainwindow.cpp" line="103"/>
         <source>Could not open DVD</source>
         <translation>Konnte DVD nicht öffnen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="161"/>
+        <location filename="mainwindow.cpp" line="167"/>
         <source>Select destination directory</source>
         <translation>Zielverzeichnis auswählen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="206"/>
+        <location filename="mainwindow.cpp" line="223"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="219"/>
+        <location filename="mainwindow.cpp" line="236"/>
         <source>Process finished</source>
         <translation>Vorgang abgeschlossen</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="219"/>
+        <location filename="mainwindow.cpp" line="236"/>
         <source>Title extracted successfully.</source>
         <translation>Titel erfolgreich extrahiert.</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="229"/>
+        <location filename="mainwindow.cpp" line="248"/>
         <source>There was an error during the copy operation: %1</source>
         <translation>Es gab einen Fehler während der Kopieroperation: %1</translation>
     </message>
@@ -181,42 +186,42 @@
 <context>
     <name>StreamModel</name>
     <message>
-        <location filename="streammodel.cpp" line="103"/>
+        <location filename="streammodel.cpp" line="112"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="105"/>
+        <location filename="streammodel.cpp" line="114"/>
         <source>Codec</source>
         <translation>Enkodierung</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="107"/>
+        <location filename="streammodel.cpp" line="116"/>
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="109"/>
+        <location filename="streammodel.cpp" line="118"/>
         <source>Channels</source>
-        <translation type="unfinished">Kanäle</translation>
+        <translation>Kanäle</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="130"/>
+        <location filename="streammodel.cpp" line="139"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="132"/>
+        <location filename="streammodel.cpp" line="141"/>
         <source>mpeg</source>
         <translation>mpeg</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="148"/>
+        <location filename="streammodel.cpp" line="157"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="175"/>
+        <location filename="streammodel.cpp" line="184"/>
         <source>Subtitle</source>
         <translation>Untertitel</translation>
     </message>
@@ -224,17 +229,17 @@
 <context>
     <name>TitleModel</name>
     <message>
-        <location filename="titlemodel.cpp" line="104"/>
+        <location filename="titlemodel.cpp" line="109"/>
         <source>#</source>
         <translation>#</translation>
     </message>
     <message>
-        <location filename="titlemodel.cpp" line="105"/>
+        <location filename="titlemodel.cpp" line="110"/>
         <source>#Chapters</source>
         <translation>Kapitel</translation>
     </message>
     <message>
-        <location filename="titlemodel.cpp" line="106"/>
+        <location filename="titlemodel.cpp" line="111"/>
         <source>Duration</source>
         <translation>Dauer</translation>
     </message>
