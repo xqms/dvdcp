@@ -63,7 +63,16 @@ void StreamModel::setTitle(dvd_reader_t* reader, int title)
 {
 	beginResetModel();
 
-	m_ifo = ifoOpen(reader, title);
+	m_ifo = 0;
+
+	IFOHandlePtr zeroIFO;
+	zeroIFO = ifoOpen(reader, 0);
+	if(!zeroIFO)
+	{
+		return;
+	}
+
+	m_ifo = ifoOpen(reader, zeroIFO->tt_srpt->title[title-1].title_set_nr);
 
 	if(m_ifo)
 	{

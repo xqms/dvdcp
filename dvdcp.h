@@ -42,6 +42,7 @@ private:
 	dvd_reader_t* m_reader; // owned by someone else
 	DVDFilePtr m_file;
 	IFOHandlePtr m_ifo;
+	IFOHandlePtr m_ifoZero;
 	int m_title;
 	QString m_destDir;
 	QString m_name;

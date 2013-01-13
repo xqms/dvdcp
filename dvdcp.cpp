@@ -81,9 +81,22 @@ void DVDCP::setDuration(double duration)
 
 bool DVDCP::openInput()
 {
-	m_file = DVDOpenFile(m_reader, m_title, DVD_READ_TITLE_VOBS);
+	m_ifoZero = ifoOpen(m_reader, 0);
+	if(!m_ifoZero)
+	{
+		error(tr("Could not open first IFO"));
+		return false;
+	}
 
-	if(!m_file)
+	int title_set_nr = m_ifoZero->tt_srpt->title[m_title-1].title_set_nr;
+	int vts_ttn = m_ifoZero->tt_srpt->title[m_title-1].vts_ttn;
+
+	log_debug("title_set_nr %d, vts_ttn %d", title_set_nr, vts_ttn);
+
+	m_file = DVDOpenFile(m_reader, title_set_nr, DVD_READ_TITLE_VOBS);
+	m_ifo = ifoOpen(m_reader, title_set_nr);
+
+	if(!m_file || !m_ifo)
 	{
 		error(tr("Could not open VOB file"));
 		return false;
@@ -96,7 +109,7 @@ bool DVDCP::openInput()
 		return false;
 	}
 
-	m_ic->pb = io_dvdread_create(m_file);
+	m_ic->pb = io_dvdread_create(m_file, vts_ttn, m_ifo);
 	m_ic->iformat = av_find_input_format("mpeg");
 
 	if(!m_ic->pb)
@@ -262,7 +275,7 @@ void DVDCP::updateProgress(AVStream *stream, const AVPacket &packet)
 		AVRational base = av_d2q(m_duration / 1000, INT_MAX);
 		permil = av_rescale_q(packet.dts - stream->start_time, stream->time_base, base);
 
-		log_debug("updateProgress: %10"PRId64" - %10"PRId64" = %10"PRId64", base = %"PRId64"/%"PRId64", time_base = %"PRId64"/%"PRId64", result: %10d",
+		log_debug("updateProgress: %10"PRId64" - %10"PRId64" = %10"PRId64", base = %d/%d, time_base = %d/%d, result: %10d",
 			packet.dts, stream->start_time, packet.dts - stream->start_time,
 			base.num, base.den,
 			stream->time_base.num, stream->time_base.den,
@@ -284,10 +297,6 @@ void DVDCP::updateProgress(AVStream *stream, const AVPacket &packet)
 bool DVDCP::run()
 {
 	m_shouldStop = false;
-
-	m_ifo = ifoOpen(m_reader, m_title);
-	if(!m_ifo)
-		return false;
 
 	if(!openInput())
 		return false;
@@ -318,7 +327,6 @@ bool DVDCP::run()
 	int64_t next_dts = AV_NOPTS_VALUE;
 	bool saw_first_ts = false;
 	m_progress_permil = 0;
-	int progress_permil = 0;
 
 	while(!m_shouldStop && av_read_frame(m_ic, &packet) == 0)
 	{

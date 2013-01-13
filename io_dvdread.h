@@ -19,7 +19,7 @@ extern "C"
  *   (evaluated with snprintf)
  * @param split_size Maximum file size
  * */
-AVIOContext* io_dvdread_create(dvd_file_t* file);
+AVIOContext* io_dvdread_create(dvd_file_t* file, int title, ifo_handle_t* vts_file);
 
 void io_dvdread_close(AVIOContext* ctx);
 

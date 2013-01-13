@@ -66,6 +66,11 @@ int TitleModel::columnCount(const QModelIndex& parent) const
 	return NUM_COLS;
 }
 
+int TitleModel::titleNumForRow(int row) const
+{
+	return m_ifos[0]->tt_srpt->title[row].title_set_nr;
+}
+
 double TitleModel::playbackTime(int row) const
 {
 	const title_info_t& title = m_ifos[0]->tt_srpt->title[row];

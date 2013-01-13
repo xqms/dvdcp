@@ -24,6 +24,7 @@ public:
 	void setReader(dvd_reader_s* reader);
 
 	int longestTitleRow() const;
+	int titleNumForRow(int row) const;
 	double playbackTime(int row) const;
 signals:
 	void changed();
