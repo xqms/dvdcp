@@ -170,6 +170,7 @@ AVIOContext* io_dvdread_create(dvd_file_t* file, int ttn, ifo_handle_t* vts_file
 	d->pos = 0;
 	d->buffer = (uint8_t*)av_malloc(DVD_VIDEO_LB_LEN);
 	d->size = get_title_size(d);
+	d->cur_cell_idx = -1;
 
 	log_debug("file size: %10"PRId64" MiB", d->size / 1024 / 1024);
 
