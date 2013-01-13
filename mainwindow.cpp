@@ -49,7 +49,7 @@ MainWindow::MainWindow()
 	connect(m_ui->startButton, SIGNAL(clicked(bool)), SLOT(start()));
 
 	QSettings settings("de.x-quadraht", "dvdcp");
-	m_ui->dirEdit->setText(settings.value("destDir").toString());
+	m_ui->dirEdit->setText(QDir::toNativeSeparators(settings.value("destDir").toString()));
 
 	m_ui->splitSpinBox->setValue(settings.value("splitSize", 4096).toInt());
 	bool split = settings.value("splitEnabled", false).toBool();
@@ -171,7 +171,7 @@ void MainWindow::selectDirectory()
 	if(path.isNull())
 		return;
 
-	m_ui->dirEdit->setText(path);
+	m_ui->dirEdit->setText(QDir::toNativeSeparators(path));
 }
 
 void MainWindow::closeEvent(QCloseEvent* ev)
@@ -183,7 +183,7 @@ void MainWindow::closeEvent(QCloseEvent* ev)
 	}
 
 	QSettings settings("de.x-quadraht", "dvdcp");
-	settings.setValue("destDir", m_ui->dirEdit->text());
+	settings.setValue("destDir", QDir::fromNativeSeparators(m_ui->dirEdit->text()));
 	settings.setValue("splitSize", m_ui->splitSpinBox->value());
 	settings.setValue("splitEnabled", m_ui->splitCheckBox->isChecked());
 	settings.setValue("audioCodec", m_ui->codecComboBox->currentIndex());
