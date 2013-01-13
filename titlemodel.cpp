@@ -179,7 +179,7 @@ int TitleModel::longestTitleRow() const
 	int ret = -1;
 	double pbTime = 0;
 
-	for(uint i = 0; i < m_ifos.size() - 1; ++i)
+	for(int i = 0; i < ((int)m_ifos.size()) - 1; ++i)
 	{
 		if(!m_ifos[i])
 			continue;
