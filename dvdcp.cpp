@@ -21,6 +21,10 @@ extern "C"
 #include "contrib/avlanguage.h"
 }
 
+#define LOG_PREFIX "[dvdcp]"
+#define DEBUG 0
+#include "log.h"
+
 int video_height[4] = {480, 576, -1, 576};
 int video_width[4]  = {720, 704, 352, 352};
 
@@ -31,6 +35,7 @@ DVDCP::DVDCP(QObject* parent)
  , m_destDir(".")
  , m_splitSize(0)
  , m_audioCodec(0)
+ , m_duration(0)
 {
 }
 
@@ -67,6 +72,11 @@ void DVDCP::setAudioChannels(const QString& channelSpec)
 void DVDCP::setAudioCodec(AVCodec* codec)
 {
 	m_audioCodec = codec;
+}
+
+void DVDCP::setDuration(double duration)
+{
+	m_duration = duration;
 }
 
 bool DVDCP::openInput()
@@ -240,6 +250,37 @@ void DVDCP::cancel()
 	m_shouldStop = true;
 }
 
+void DVDCP::updateProgress(AVStream *stream, const AVPacket &packet)
+{
+	if(packet.dts == AV_NOPTS_VALUE)
+		return;
+
+	int permil = m_progress_permil;
+
+	if(m_duration != 0)
+	{
+		AVRational base = av_d2q(m_duration / 1000, INT_MAX);
+		permil = av_rescale_q(packet.dts - stream->start_time, stream->time_base, base);
+
+		log_debug("updateProgress: %10"PRId64" - %10"PRId64" = %10"PRId64", base = %"PRId64"/%"PRId64", time_base = %"PRId64"/%"PRId64", result: %10d",
+			packet.dts, stream->start_time, packet.dts - stream->start_time,
+			base.num, base.den,
+			stream->time_base.num, stream->time_base.den,
+			permil
+		);
+	}
+	else if(packet.dts != AV_NOPTS_VALUE && stream->duration != AV_NOPTS_VALUE)
+	{
+		permil = av_rescale(packet.dts - stream->start_time, 1000, stream->duration);
+	}
+
+	if(permil != m_progress_permil)
+	{
+		emit progress(permil);
+		m_progress_permil = permil;
+	}
+}
+
 bool DVDCP::run()
 {
 	m_shouldStop = false;
@@ -276,6 +317,7 @@ bool DVDCP::run()
 	int64_t next_pts = AV_NOPTS_VALUE;
 	int64_t next_dts = AV_NOPTS_VALUE;
 	bool saw_first_ts = false;
+	m_progress_permil = 0;
 	int progress_permil = 0;
 
 	while(!m_shouldStop && av_read_frame(m_ic, &packet) == 0)
@@ -290,15 +332,7 @@ bool DVDCP::run()
 
 		if(stream->codec->codec_type == AVMEDIA_TYPE_VIDEO)
 		{
-			if(packet.dts != AV_NOPTS_VALUE && stream->duration != AV_NOPTS_VALUE)
-			{
-				int permil = av_rescale(packet.dts - stream->start_time, 1000, stream->duration);
-				if(permil != progress_permil)
-				{
-					emit progress(permil);
-					progress_permil = permil;
-				}
-			}
+			updateProgress(stream, packet);
 
 			AVStream* ostream = m_oc->streams[0];
 

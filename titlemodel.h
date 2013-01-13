@@ -24,12 +24,11 @@ public:
 	void setReader(dvd_reader_s* reader);
 
 	int longestTitleRow() const;
+	double playbackTime(int row) const;
 signals:
 	void changed();
 private:
 	std::vector<ifo_handle_t*> m_ifos;
-
-	double playbackTime(int ifoIndex) const;
 };
 
 #endif

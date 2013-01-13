@@ -26,6 +26,7 @@ public:
 	void setTitle(int title);
 	void setDest(const QString& path, const QString& name);
 	void setSplitSize(uint64_t split_size);
+	void setDuration(double duration);
 
 	void setAudioCodec(AVCodec* codec);
 	void setAudioChannels(const QString& channelSpec);
@@ -50,6 +51,8 @@ private:
 	QString m_audioChannels;
 	AVCodec* m_audioCodec;
 	bool m_shouldStop;
+	double m_duration;
+	int m_progress_permil;
 
 	AVFormatContextPtr m_oc;
 	AVFormatContextPtr m_ic;
@@ -59,6 +62,8 @@ private:
 
 	bool setupVideoStream();
 	bool setupAudioStreams();
+
+	void updateProgress(AVStream* stream, const AVPacket& packet);
 };
 
 #endif

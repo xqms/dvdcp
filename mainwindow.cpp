@@ -205,7 +205,11 @@ void MainWindow::start()
 	m_cp->setDest(m_ui->dirEdit->text(), m_ui->nameEdit->text());
 	m_cp->setReader(m_reader());
 	m_cp->setSplitSize(m_ui->splitCheckBox->isChecked() ? 1024LL * 1024LL * m_ui->splitSpinBox->value() : 0);
-	m_cp->setTitle(m_ui->titleView->currentIndex().row()+1);
+
+	int title_idx = m_ui->titleView->currentIndex().row();
+	m_cp->setTitle(title_idx + 1);
+	m_cp->setDuration(m_titleModel->playbackTime(title_idx));
+
 	m_cp->setEnabledAudioStreams(m_streamModel->enabledAudioStreams());
 
 	int idx = m_ui->channelComboBox->currentIndex();

@@ -66,9 +66,9 @@ int TitleModel::columnCount(const QModelIndex& parent) const
 	return NUM_COLS;
 }
 
-double TitleModel::playbackTime(int ifoIndex) const
+double TitleModel::playbackTime(int row) const
 {
-	const title_info_t& title = m_ifos[0]->tt_srpt->title[ifoIndex-1];
+	const title_info_t& title = m_ifos[0]->tt_srpt->title[row];
 	const ifo_handle_t& ifo = *m_ifos[title.title_set_nr];
 
 	if(!m_ifos[title.title_set_nr])
@@ -129,7 +129,7 @@ QVariant TitleModel::data(const QModelIndex& index, int role) const
 		case COL_DURATION:
 			if(!m_ifos[index.row()])
 				return QString("-");
-			int secs = playbackTime(index.row()+1);
+			int secs = playbackTime(index.row());
 			return QString("%1:%2:%3")
 				.arg(secs / 60 / 60, 2, 10, QChar('0'))
 				.arg((secs / 60) % 60, 2, 10, QChar('0'))
@@ -174,9 +174,9 @@ int TitleModel::longestTitleRow() const
 	int ret = -1;
 	double pbTime = 0;
 
-	for(uint i = 1; i < m_ifos.size(); ++i)
+	for(uint i = 0; i < m_ifos.size() - 1; ++i)
 	{
-		if(!m_ifos[i-1])
+		if(!m_ifos[i])
 			continue;
 
 		double cur_time = playbackTime(i);
@@ -188,5 +188,5 @@ int TitleModel::longestTitleRow() const
 		}
 	}
 
-	return ret-1;
+	return ret;
 }
