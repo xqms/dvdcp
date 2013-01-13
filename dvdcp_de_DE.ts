@@ -181,37 +181,42 @@
 <context>
     <name>StreamModel</name>
     <message>
-        <location filename="streammodel.cpp" line="102"/>
+        <location filename="streammodel.cpp" line="103"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="104"/>
+        <location filename="streammodel.cpp" line="105"/>
         <source>Codec</source>
         <translation>Enkodierung</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="106"/>
+        <location filename="streammodel.cpp" line="107"/>
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="127"/>
+        <location filename="streammodel.cpp" line="109"/>
+        <source>Channels</source>
+        <translation type="unfinished">Kanäle</translation>
+    </message>
+    <message>
+        <location filename="streammodel.cpp" line="130"/>
         <source>Video</source>
         <translation>Video</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="129"/>
+        <location filename="streammodel.cpp" line="132"/>
         <source>mpeg</source>
         <translation>mpeg</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="144"/>
+        <location filename="streammodel.cpp" line="148"/>
         <source>Audio</source>
         <translation>Audio</translation>
     </message>
     <message>
-        <location filename="streammodel.cpp" line="166"/>
+        <location filename="streammodel.cpp" line="175"/>
         <source>Subtitle</source>
         <translation>Untertitel</translation>
     </message>
