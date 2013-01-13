@@ -36,12 +36,12 @@ MainWindow::MainWindow()
 
 	m_titleModel = new TitleModel(this);
 	m_ui->titleView->setModel(m_titleModel);
-	connect(m_ui->titleView, SIGNAL(activated(QModelIndex)), SLOT(titleSelected(QModelIndex)));
+	connect(m_ui->titleView, SIGNAL(clicked(QModelIndex)), SLOT(titleSelected(QModelIndex)));
 	connect(m_titleModel, SIGNAL(changed()), SLOT(titleListChanged()));
 
 	m_sourceModel = new SourceModel(this);
 	m_ui->sourceView->setModel(m_sourceModel);
-	connect(m_ui->sourceView, SIGNAL(activated(QModelIndex)), SLOT(sourceSelected(QModelIndex)));
+	connect(m_ui->sourceView, SIGNAL(clicked(QModelIndex)), SLOT(sourceSelected(QModelIndex)));
 	connect(m_sourceModel, SIGNAL(changed()), SLOT(sourceListChanged()));
 	sourceListChanged();
 
