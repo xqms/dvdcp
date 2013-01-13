@@ -4,7 +4,7 @@
 #include "io_dvdread.h"
 
 #define LOG_PREFIX "[io_dvdread]"
-#define DEBUG 1
+#define DEBUG 0
 #include "log.h"
 
 struct DVDReadContext
