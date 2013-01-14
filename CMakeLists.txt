@@ -7,7 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 
 if(WIN32)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CSS_FLAGS} -mno-ms-bitfields")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mno-ms-bitfields")
 endif()
 
 find_package(Qt5Widgets REQUIRED)
