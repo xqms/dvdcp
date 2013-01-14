@@ -93,7 +93,7 @@ bool AudioHandler::setupStream(AVFormatContext* ctx, AVStream* source, AVCodec* 
 	if (!source->codec->channel_layout)
 		source->codec->channel_layout = av_get_default_channel_layout(source->codec->channels);
 	snprintf(args, sizeof(args),
-		"time_base=%d/%d:sample_rate=%d:sample_fmt=%s:channel_layout=0x%"PRIx64,
+		"time_base=%d/%d:sample_rate=%d:sample_fmt=%s:channel_layout=0x%" PRIx64,
 		source->time_base.num, source->time_base.den, source->codec->sample_rate,
 		av_get_sample_fmt_name(source->codec->sample_fmt), source->codec->channel_layout
 	);
@@ -227,7 +227,7 @@ bool AudioHandler::handleFrame(const AVPacket& packet)
 {
 	avcodec_get_frame_defaults(m_frame);
 
-	log_debug("got packet with PTS %10"PRId64, packet.pts);
+	log_debug("got packet with PTS %10" PRId64, packet.pts);
 
 	int got_frame;
 	if(avcodec_decode_audio4(m_sourceStream->codec, m_frame, &got_frame, &packet) < 0)
@@ -243,7 +243,7 @@ bool AudioHandler::handleFrame(const AVPacket& packet)
 	if(!got_frame)
 		return true;
 
-	log_debug("got audio frame with PTS %10"PRId64, m_frame->pts);
+	log_debug("got audio frame with PTS %10" PRId64, m_frame->pts);
 	if(av_buffersrc_add_frame(m_source, m_frame, 0) < 0)
 	{
 		error("Could not push frame to audio filter");
@@ -265,7 +265,7 @@ bool AudioHandler::handleFrame(const AVPacket& packet)
 
 		avfilter_copy_buf_props(m_filteredFrame, samplesref);
 		m_filteredFrame->pts = samplesref->pts;
-		log_debug("filtered frame pts: %10"PRId64, m_filteredFrame->pts);
+		log_debug("filtered frame pts: %10" PRId64, m_filteredFrame->pts);
 
 		AVPacket packet;
 		av_init_packet(&packet);
@@ -284,7 +284,7 @@ bool AudioHandler::handleFrame(const AVPacket& packet)
 		if(got_packet)
 		{
 			packet.stream_index = m_stream->index;
-			log_debug("writing frame, pts = %10"PRId64", dts = %10"PRId64", stream index %d", packet.pts, packet.dts, packet.stream_index);
+			log_debug("writing frame, pts = %10" PRId64 ", dts = %10" PRId64 ", stream index %d", packet.pts, packet.dts, packet.stream_index);
 
 			if(av_interleaved_write_frame(m_ctx, &packet) != 0)
 			{

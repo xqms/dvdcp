@@ -95,7 +95,7 @@ int io_dvdread_read_packet(void* opaque, uint8_t* buf, int size)
 		const CellDesc* cell = get_cell(d, offset);
 		if(!cell)
 		{
-			log_warning("Could not find cell for offset %20"PRId64, offset);
+			log_warning("Could not find cell for offset %20" PRId64, offset);
 			return -1;
 		}
 
@@ -108,7 +108,7 @@ int io_dvdread_read_packet(void* opaque, uint8_t* buf, int size)
 
 		uint64_t bytes = ret * DVD_VIDEO_LB_LEN;
 
-		log_debug("read %10"PRId64" from block %10lu for size %10d", ret, offset / DVD_VIDEO_LB_LEN, size);
+		log_debug("read %10" PRId64 " from block %10lu for size %10d", ret, offset / DVD_VIDEO_LB_LEN, size);
 
 		uint64_t cnt = (dsize < bytes) ? dsize : bytes;
 
@@ -131,15 +131,15 @@ int64_t io_dvdread_seek(void* opaque, int64_t offset, int whence)
 	switch(whence)
 	{
 		case SEEK_SET:
-			log_debug("seek set %"PRId64, offset);
+			log_debug("seek set %" PRId64, offset);
 			d->pos = offset;
 			return offset;
 			break;
 		case SEEK_CUR:
-			log_debug("seek cur => %"PRId64, d->pos);
+			log_debug("seek cur => %" PRId64, d->pos);
 			return d->pos;
 		case SEEK_END:
-			log_debug("seek end %"PRId64, offset);
+			log_debug("seek end %" PRId64, offset);
 			d->pos = offset = d->size + offset;
 			return offset;
 		case AVSEEK_SIZE:
@@ -172,7 +172,7 @@ AVIOContext* io_dvdread_create(dvd_file_t* file, int ttn, ifo_handle_t* vts_file
 	d->size = get_title_size(d);
 	d->cur_cell_idx = -1;
 
-	log_debug("file size: %10"PRId64" MiB", d->size / 1024 / 1024);
+	log_debug("file size: %10" PRId64 " MiB", d->size / 1024 / 1024);
 
 	ctx = avio_alloc_context(
 		buffer, DVD_VIDEO_LB_LEN,
