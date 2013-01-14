@@ -5,11 +5,16 @@
 
 #include "devicewatcher.h"
 #include "cobjectptr.h"
+#include "dvdreader.h"
 
 #include <QDir>
 #include <QDebug>
 #include <QIcon>
+
 #include <dvdread/dvd_reader.h>
+
+#define LOG_PREFIX "[SourceModel]"
+#include "log.h"
 
 SourceModel::SourceModel(QObject* parent)
  : QAbstractListModel(parent)
@@ -68,18 +73,14 @@ void SourceModel::reload()
 		if(!mountPoint.exists("VIDEO_TS"))
 			continue;
 
-		DVDReaderPtr reader;
-		reader = DVDOpen(QDir::toNativeSeparators(path).toLatin1().constData());
-		if(!reader)
+		DVDReader reader;
+		if(!reader.open(QDir::toNativeSeparators(path).toStdString()))
 			continue;
-
-		char volid[32];
-		DVDUDFVolumeInfo(reader, volid, sizeof(volid), NULL, 0);
 
 		beginInsertRows(QModelIndex(), m_entries.count(), m_entries.count());
 		SourceEntry entry;
 		entry.path = path;
-		entry.title = volid;
+		entry.title = QString::fromStdString(reader.volumeID());
 		m_entries << entry;
 		endInsertRows();
 	}
@@ -108,8 +109,25 @@ int SourceModel::rowCount(const QModelIndex& parent) const
 	return m_entries.count();
 }
 
-QString SourceModel::path(const QModelIndex& index) const
+DVDReader* SourceModel::createReader(const QModelIndex& index) const
 {
-	return m_entries[index.row()].path;
+	const QString& url = m_entries[index.row()].path;
+	DVDReader* reader = new DVDReader();
+	if(!reader->open(url.toStdString()))
+	{
+		log_warning("Could not open DVDReader for '%s'", url.toLatin1().constData());
+		delete reader;
+		return 0;
+	}
+
+	if(!reader->readTitleIFOs())
+	{
+		log_warning("Could not read title IFOs for '%s'", url.toLatin1().constData());
+		delete reader;
+		return 0;
+	}
+
+	return reader;
 }
+
 

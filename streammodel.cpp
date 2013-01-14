@@ -2,6 +2,7 @@
 // Author: Max Schwarz <xqms@online.de>
 
 #include "streammodel.h"
+#include "dvdreader.h"
 
 #include <QString>
 #include <QLocale>
@@ -59,38 +60,38 @@ Qt::ItemFlags StreamModel::flags(const QModelIndex& index) const
 	return QAbstractTableModel::flags(index) | extra;
 }
 
-void StreamModel::setTitle(dvd_reader_t* reader, int title)
+void StreamModel::setTitle(DVDReader* reader, int title)
 {
 	beginResetModel();
 
-	m_ifo = 0;
+	m_reader = reader;
+	int ttn = m_reader->ifo(0)->tt_srpt->title[title-1].title_set_nr;
+	m_ifo = m_reader->ifo(ttn);
 
-	IFOHandlePtr zeroIFO;
-	zeroIFO = ifoOpen(reader, 0);
-	if(!zeroIFO)
+	if(!m_ifo)
 	{
+		m_reader = 0;
+		m_ifo = 0;
+		endResetModel();
+		emit changed();
 		return;
 	}
 
-	m_ifo = ifoOpen(reader, zeroIFO->tt_srpt->title[title-1].title_set_nr);
 
-	if(m_ifo)
+	m_enabledStreams.resize(m_ifo->vtsi_mat->nr_of_vts_audio_streams + m_ifo->vtsi_mat->nr_of_vts_subp_streams + 1);
+	m_enabledStreams.fill(false);
+	m_enabledStreams[0] = true;
+
+	QByteArray code = QLocale().name().left(2).toLower().toLatin1();
+
+	// Auto-enable the first audio stream with matching language
+	for(int i = 0; i < m_ifo->vtsi_mat->nr_of_vts_audio_streams; ++i)
 	{
-		m_enabledStreams.resize(m_ifo->vtsi_mat->nr_of_vts_audio_streams + m_ifo->vtsi_mat->nr_of_vts_subp_streams + 1);
-		m_enabledStreams.fill(false);
-		m_enabledStreams[0] = true;
-
-		QByteArray code = QLocale().name().left(2).toLower().toLatin1();
-
-		// Auto-enable the first audio stream with matching language
-		for(int i = 0; i < m_ifo->vtsi_mat->nr_of_vts_audio_streams; ++i)
+		const audio_attr_t& attr = m_ifo->vtsi_mat->vts_audio_attr[i];
+		if((attr.lang_code >> 8) == code[0] && (attr.lang_code & 0xFF) == code[1])
 		{
-			const audio_attr_t& attr = m_ifo->vtsi_mat->vts_audio_attr[i];
-			if((attr.lang_code >> 8) == code[0] && (attr.lang_code & 0xFF) == code[1])
-			{
-				m_enabledStreams[i+1] = true;
-				break;
-			}
+			m_enabledStreams[i+1] = true;
+			break;
 		}
 	}
 

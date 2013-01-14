@@ -14,6 +14,7 @@
 
 struct AVFormatContext;
 class AudioHandler;
+class DVDReader;
 
 class DVDCP : public QObject
 {
@@ -22,7 +23,7 @@ public:
 	DVDCP(QObject* parent);
 	virtual ~DVDCP();
 
-	void setReader(dvd_reader_t* reader);
+	void setReader(DVDReader* reader);
 	void setTitle(int title);
 	void setDest(const QString& path, const QString& name);
 	void setSplitSize(uint64_t split_size);
@@ -39,10 +40,10 @@ public slots:
 	bool run();
 	void cancel();
 private:
-	dvd_reader_t* m_reader; // owned by someone else
+	DVDReader* m_reader;
 	DVDFilePtr m_file;
 	IFOHandlePtr m_ifo;
-	IFOHandlePtr m_ifoZero;
+
 	int m_title;
 	QString m_destDir;
 	QString m_name;

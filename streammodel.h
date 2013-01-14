@@ -5,9 +5,9 @@
 #define STREAMMODEL_H
 
 #include <QAbstractTableModel>
+#include <dvdread/ifo_types.h>
 
-#include "cobjectptr.h"
-
+class DVDReader;
 class StreamModel : public QAbstractTableModel
 {
 Q_OBJECT
@@ -22,14 +22,15 @@ public:
 	virtual bool setData(const QModelIndex& index, const QVariant& value, int role = Qt::EditRole);
 	virtual Qt::ItemFlags flags(const QModelIndex& index) const;
 
-	void setTitle(dvd_reader_t* reader, int title);
+	void setTitle(DVDReader* reader, int title);
 	bool videoEnabled();
 	QVector<bool> enabledAudioStreams();
 	QVector<bool> enabledSubtitleStreams();
 signals:
 	void changed();
 private:
-	IFOHandlePtr m_ifo;
+	DVDReader* m_reader;
+	ifo_handle_t* m_ifo;
 	QVector<bool> m_enabledStreams;
 };
 

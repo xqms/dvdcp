@@ -5,9 +5,8 @@
 #define TITLEMODEL_H
 
 #include <QAbstractListModel>
-#include <vector>
 
-#include <dvdread/ifo_types.h>
+class DVDReader;
 
 class TitleModel : public QAbstractTableModel
 {
@@ -21,7 +20,7 @@ public:
 	virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
 	virtual QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-	void setReader(dvd_reader_s* reader);
+	void setReader(DVDReader* reader);
 
 	int longestTitleRow() const;
 	int titleNumForRow(int row) const;
@@ -29,7 +28,7 @@ public:
 signals:
 	void changed();
 private:
-	std::vector<ifo_handle_t*> m_ifos;
+	DVDReader* m_reader;
 };
 
 #endif

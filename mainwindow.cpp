@@ -93,11 +93,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::sourceSelected(const QModelIndex& index)
 {
-	QString path = QDir::toNativeSeparators(m_sourceModel->path(index));
+	if(!index.isValid())
+	{
+		m_reader = 0;
+		m_titleModel->setReader(0);
 
-	qDebug() << "Opening" << path;
+		return;
+	}
 
-	m_reader = DVDOpen(path.toLatin1().constData());
+	m_reader.reset(m_sourceModel->createReader(index));
 	if(!m_reader)
 	{
 		QMessageBox::critical(this, tr("Error"), tr("Could not open DVD"));
@@ -105,14 +109,9 @@ void MainWindow::sourceSelected(const QModelIndex& index)
 		return;
 	}
 
-	char volid[32];
-	DVDUDFVolumeInfo(m_reader(), volid, sizeof(volid), NULL, 0);
+	m_titleModel->setReader(m_reader.get());
 
-	qDebug() << "DVD opened:" << volid;
-
-	m_titleModel->setReader(m_reader());
-
-	m_ui->nameEdit->setText(volid);
+	m_ui->nameEdit->setText(QString::fromStdString(m_reader->volumeID()));
 
 	m_sourceIndex = index;
 }
@@ -151,7 +150,7 @@ void MainWindow::titleSelected(const QModelIndex& index)
 	if(index.isValid())
 	{
 		Q_ASSERT(m_reader);
-		m_streamModel->setTitle(m_reader(), index.row()+1);
+		m_streamModel->setTitle(m_reader.get(), index.row()+1);
 		m_ui->streamView->resizeColumnsToContents();
 		qApp->processEvents();
 		m_ui->streamView->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
@@ -203,7 +202,7 @@ void MainWindow::start()
 	m_processing = true;
 	m_ui->progressBar->setValue(0);
 	m_cp->setDest(m_ui->dirEdit->text(), m_ui->nameEdit->text());
-	m_cp->setReader(m_reader());
+	m_cp->setReader(m_reader.get());
 	m_cp->setSplitSize(m_ui->splitCheckBox->isChecked() ? 1024LL * 1024LL * m_ui->splitSpinBox->value() : 0);
 
 	int title_idx = m_ui->titleView->currentIndex().row();

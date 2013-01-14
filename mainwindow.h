@@ -6,14 +6,17 @@
 
 #include <QWidget>
 #include <QAbstractItemModel>
+#include <memory>
 
+#include "dvdreader.h"
 #include "cobjectptr.h"
 
 class SourceModel;
 class TitleModel;
 class StreamModel;
 class DVDCP;
-struct dvd_reader_s;
+class DVDReader;
+
 namespace Ui
 {
 	class MainWindow;
@@ -45,7 +48,7 @@ private:
 
 	TitleModel* m_titleModel;
 	StreamModel* m_streamModel;
-	DVDReaderPtr m_reader;
+	std::unique_ptr<DVDReader> m_reader;
 	DVDCP* m_cp;
 	bool m_processing;
 

@@ -18,6 +18,8 @@ struct SourceEntry
 	}
 };
 
+class DVDReader;
+
 class SourceModel : public QAbstractListModel
 {
 Q_OBJECT
@@ -27,7 +29,8 @@ public:
 
 	virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
 	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
-	QString path(const QModelIndex& index) const;
+
+	DVDReader* createReader(const QModelIndex& index) const;
 signals:
 	void changed();
 public slots:

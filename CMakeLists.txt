@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8.8)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall")
 
 if(WIN32)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CSS_FLAGS} -mno-ms-bitfields")
@@ -45,6 +45,7 @@ qt5_create_translation(LANG_SRCS dvdcp_de_DE.ts
 
 add_executable(dvdcp
 	main.cpp
+	dvdreader.cpp
 	sourcemodel.cpp
 	streammodel.cpp
 	titlemodel.cpp

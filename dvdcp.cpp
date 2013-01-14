@@ -5,6 +5,7 @@
 #include "io_dvdread.h"
 #include "io_split.h"
 #include "audiohandler.h"
+#include "dvdreader.h"
 
 #include <QDebug>
 #include <QDir>
@@ -12,6 +13,8 @@
 
 extern "C"
 {
+#include <inttypes.h>
+
 #include <libavformat/avio.h>
 #include <libavformat/avformat.h>
 #include <dvdread/ifo_types.h>
@@ -49,7 +52,7 @@ void DVDCP::setDest(const QString& path, const QString& name)
 	m_name = name;
 }
 
-void DVDCP::setReader(dvd_reader_t* reader)
+void DVDCP::setReader(DVDReader* reader)
 {
 	m_reader = reader;
 }
@@ -81,20 +84,14 @@ void DVDCP::setDuration(double duration)
 
 bool DVDCP::openInput()
 {
-	m_ifoZero = ifoOpen(m_reader, 0);
-	if(!m_ifoZero)
-	{
-		error(tr("Could not open first IFO"));
-		return false;
-	}
-
-	int title_set_nr = m_ifoZero->tt_srpt->title[m_title-1].title_set_nr;
-	int vts_ttn = m_ifoZero->tt_srpt->title[m_title-1].vts_ttn;
+	ifo_handle_t* ifoZero = m_reader->ifo(0);
+	int title_set_nr = ifoZero->tt_srpt->title[m_title-1].title_set_nr;
+	int vts_ttn = ifoZero->tt_srpt->title[m_title-1].vts_ttn;
 
 	log_debug("title_set_nr %d, vts_ttn %d", title_set_nr, vts_ttn);
 
-	m_file = DVDOpenFile(m_reader, title_set_nr, DVD_READ_TITLE_VOBS);
-	m_ifo = ifoOpen(m_reader, title_set_nr);
+	m_file = DVDOpenFile(m_reader->reader(), title_set_nr, DVD_READ_TITLE_VOBS);
+	m_ifo = m_reader->ifo(title_set_nr);
 
 	if(!m_file || !m_ifo)
 	{
@@ -274,13 +271,6 @@ void DVDCP::updateProgress(AVStream *stream, const AVPacket &packet)
 	{
 		AVRational base = av_d2q(m_duration / 1000, INT_MAX);
 		permil = av_rescale_q(packet.dts - stream->start_time, stream->time_base, base);
-
-		log_debug("updateProgress: %10"PRId64" - %10"PRId64" = %10"PRId64", base = %d/%d, time_base = %d/%d, result: %10d",
-			packet.dts, stream->start_time, packet.dts - stream->start_time,
-			base.num, base.den,
-			stream->time_base.num, stream->time_base.den,
-			permil
-		);
 	}
 	else if(packet.dts != AV_NOPTS_VALUE && stream->duration != AV_NOPTS_VALUE)
 	{

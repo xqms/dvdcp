@@ -2,6 +2,7 @@
 // Author: Max Schwarz <xqms@online.de>
 
 #include "titlemodel.h"
+#include "dvdreader.h"
 
 extern "C"
 {
@@ -38,24 +39,23 @@ static int dvdtime2msec(const dvd_time_t *dt)
 
 TitleModel::TitleModel(QObject* parent)
  : QAbstractTableModel(parent)
+ , m_reader(0)
 {
 }
 
 TitleModel::~TitleModel()
 {
-	for(uint i = 0; i < m_ifos.size(); ++i)
-		ifoClose(m_ifos[i]);
 }
 
 int TitleModel::rowCount(const QModelIndex& parent) const
 {
-	if(m_ifos.size() == 0)
+	if(!m_reader)
 		return 0;
 
 	if(parent.isValid())
 		return 0;
 
-	return m_ifos[0]->tt_srpt->nr_of_srpts;
+	return m_reader->ifo(0)->tt_srpt->nr_of_srpts;
 }
 
 int TitleModel::columnCount(const QModelIndex& parent) const
@@ -68,16 +68,17 @@ int TitleModel::columnCount(const QModelIndex& parent) const
 
 int TitleModel::titleNumForRow(int row) const
 {
-	return m_ifos[0]->tt_srpt->title[row].title_set_nr;
+	return m_reader->ifo(0)->tt_srpt->title[row].title_set_nr;
 }
 
 double TitleModel::playbackTime(int row) const
 {
-	const title_info_t& title = m_ifos[0]->tt_srpt->title[row];
-	const ifo_handle_t& ifo = *m_ifos[title.title_set_nr];
+	const title_info_t& title = m_reader->ifo(0)->tt_srpt->title[row];
 
-	if(!m_ifos[title.title_set_nr])
+	if(!m_reader->ifo(title.title_set_nr))
 		return 0.0;
+
+	const ifo_handle_t& ifo = *m_reader->ifo(title.title_set_nr);
 
 	if(!ifo.vts_ptt_srpt)
 		return 0.0;
@@ -123,7 +124,7 @@ QVariant TitleModel::data(const QModelIndex& index, int role) const
 	else if(role != Qt::DisplayRole)
 		return QVariant();
 
-	const title_info_t& title = m_ifos[0]->tt_srpt->title[index.row()];
+	const title_info_t& title = m_reader->ifo(0)->tt_srpt->title[index.row()];
 
 	switch(index.column())
 	{
@@ -132,7 +133,7 @@ QVariant TitleModel::data(const QModelIndex& index, int role) const
 		case COL_NUM_CHAPTERS:
 			return QString::number(title.nr_of_ptts);
 		case COL_DURATION:
-			if(!m_ifos[index.row()])
+			if(!m_reader->ifo(index.row()))
 				return QString("-");
 			int secs = playbackTime(index.row());
 			return QString("%1:%2:%3")
@@ -145,29 +146,11 @@ QVariant TitleModel::data(const QModelIndex& index, int role) const
 	return QVariant();
 }
 
-void TitleModel::setReader(dvd_reader_s* reader)
+void TitleModel::setReader(DVDReader* reader)
 {
 	beginResetModel();
 
-	for(uint i = 0; i < m_ifos.size(); ++i)
-		ifoClose(m_ifos[i]);
-
-	if(reader)
-	{
-		m_ifos.resize(1);
-
-		qDebug() << "Reading IFOs";
-		m_ifos[0] = ifoOpen(reader, 0);
-		if(m_ifos[0])
-		{
-			for(int i = 1; i <= m_ifos[0]->vts_atrt->nr_of_vtss; ++i)
-				m_ifos.push_back(ifoOpen(reader, i));
-		}
-		else
-			m_ifos.clear();
-	}
-	else
-		m_ifos.clear();
+	m_reader = reader;
 
 	endResetModel();
 
@@ -179,12 +162,12 @@ int TitleModel::longestTitleRow() const
 	int ret = -1;
 	double pbTime = 0;
 
-	for(int i = 0; i < ((int)m_ifos.size()) - 1; ++i)
+	for(size_t i = 1; i < m_reader->ifoCount(); ++i)
 	{
-		if(!m_ifos[i])
+		if(!m_reader->ifo(i))
 			continue;
 
-		double cur_time = playbackTime(i);
+		double cur_time = playbackTime(i-1);
 
 		if(ret == -1 || cur_time > pbTime)
 		{
@@ -193,5 +176,5 @@ int TitleModel::longestTitleRow() const
 		}
 	}
 
-	return ret;
+	return ret-1;
 }
